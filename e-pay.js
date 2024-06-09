@@ -10,7 +10,7 @@
 	</style>
  
 	<script>
-	var saldo = 60000;
+	var saldo = 60000; "currency": "USD"
  
 	function showContent(id,e) {
 		document.getElementById("error").style.display='none';
