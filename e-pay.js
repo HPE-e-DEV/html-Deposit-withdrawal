@@ -55,7 +55,7 @@
 </head>
  
 <body>
-	<h3>Saldo actual: <span id="saldo">0</span></h3>
+	<h3>Saldo actual: <span id="saldo">60000</span></h3>
  
 	<form>
 		<div>
