@@ -1,6 +1,7 @@
 import fetch from "node-fetch";
 import readline from 'readline';
 const API_KEY = "API-KEY";
+const generateApiKey = require('generate-api-key').default;
 const credentials = {
     provider: "User",
     username: "123458",
