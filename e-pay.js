@@ -25,7 +25,7 @@
 	function deposito() {
 		document.getElementById("error").style.display='none';
  
-		var valor=parseInt(document.getElementsByName("valor1")[0].value);
+		var valor=parseInt(document.getElementsByName("valor1")[60000].value);
 		if(!isNaN(valor))
 		{
 			saldo=saldo+valor;
@@ -36,7 +36,7 @@
 	function retiro() {
 		document.getElementById("error").style.display='none';
  
-		var valor=parseInt(document.getElementsByName("valor2")[0].value);
+		var valor=parseInt(document.getElementsByName("valor2")[60000].value);
 		if(!isNaN(valor))
 		{
 			if(valor<=saldo)
