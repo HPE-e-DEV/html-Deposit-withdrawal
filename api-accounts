@@ -1,0 +1,138 @@
+import fetch from "node-fetch";
+import readline from 'readline';
+const API_KEY = "API-KEY";
+const credentials = {
+    provider: "User",
+    username: "123458",
+    password: "2024"
+};
+
+//To read an input
+const rl = readline.createInterface({
+    input: process.stdin,
+    output: process.stdout
+});
+
+
+const session_response = await fetch(
+    URL + '/login/', {
+        method: 'post',
+        body: new URLSearchParams(credentials),
+        headers: {
+            'X-API-Key': API_KEY
+        }
+    }
+);
+const session = await session_response.json();
+
+try {
+    const accounts = await fetch(`${URL}/account/?key=${session.key}`, {
+        headers: {
+            'X-API-Key': API_KEY
+        }
+    });
+    const accounts_json = await accounts.json();
+
+    console.log(accounts_json);
+
+    const first_account = await accounts_json.accounts[0];
+    const transfer_data = {
+        origin_account: first_account.number,
+        destination_account: '037069523',
+        destination_institution: '5600010',
+        authorization_device_number: '01',
+        currency: 'UYU',
+        amount: 1,
+        concept: 'test prometeo',
+        destination_owner_name: '',
+        branch: ''
+    }
+    const transfer_preprocess = await fetch(
+        `${URL}/transfer/preprocess?key=${session.key}`, {
+            method: 'post',
+            body: new URLSearchParams({
+                key: session.key,
+                ...transfer_data
+            }),
+            headers: {
+                'X-API-Key': API_KEY
+            }
+        }
+    );
+    const preprocess_json = await transfer_preprocess.json();
+    console.log(preprocess_json);
+
+    const otp_value = await new Promise(r => {
+        rl.question('OTP? ', r);
+    })
+    await rl.close();
+    const request_id = preprocess_json.result.request_id;
+    const transfer_confirm = await fetch(
+        `${URL}/transfer/confirm?key=${session.key}`, {
+            method: 'post',
+            body: new URLSearchParams({
+                key: session.key,
+                request_id: request_id,
+                authorization_type: 'otp',
+                authorization_data: otp_value,
+                authorization_device_number: transfer_data.authorization_device_number
+            }),
+            headers: {
+                'X-API-Key': API_KEY
+            }
+        }
+    )
+    const confirm_json = await transfer_confirm.json();
+    console.log(confirm_json);
+
+} finally {
+    const logout = await fetch(`${URL}/logout/?key=${session.key}`, {
+        headers: {
+            'X-API-Key': API_KEY
+        }
+    });
+}
+
+
+
+
+
+
+{
+    "status": "success",
+    "accounts": [
+        {
+            "id": "12345XX",
+            "name": " Account 1",
+            "number": "12345678",
+            "branch": "",
+            "currency": "USD",
+            "balance": 65000
+        },
+        {
+            "id": "12346",
+            "name": " Account 2",
+            "number": "87654321XX",
+            "branch": "",
+            "currency": "USD",
+            "balance": 65000
+        }
+    ]
+}
+{
+    "status": "success",
+    "result": {
+        "approved": true,
+        "message": "",
+        "request_id": "c17a55adeb90b4072981d36f4260de6e7",
+        "authorization_devices": []
+    }
+}
+OTP? 123213
+{
+    "status": "success",
+    "transfer": {
+        "success": true,
+        "message": "Operation number: 20858"
+    }
+}
